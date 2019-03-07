@@ -6,10 +6,17 @@ The beginnings of an agent that might someday play Baroque Chess.
 import BC_state_etc as BC
 import time
 
+TURN = 0
+zobristnum = []
+mySide = 'W'
+rows = 8
+columns = 8
+K = 8
+
 
 def static_eval(board):
-    black_value=0.0
-    white_value=0.0
+    black_value = 0.0
+    white_value = 0.0
 
     for r, row in enumerate(board):
         for c, col in enumerate(row):
@@ -29,10 +36,15 @@ def static_eval(board):
                         diag_left = [current_square]
                         dir = [horizontal, vertical, diag_left, diag_right]
                         for k in range(1, K):
-                            horizontal += current_state[i][(j + k) % columns]  # E
-                            diag_right += current_state[(i + k) % rows][(j + k) % columns]  # SE
+                            # E
+                            horizontal += current_state[i][(j + k) % columns]
+                            # SE
+                            diag_right += current_state[(i + k) %
+                                                        rows][(j + k) % columns]
                             vertical += current_state[(i + k) % rows][j]  # S
-                            diag_left += current_state[(i + k) % rows][(j - k) % columns]  # SW
+                            # SW
+                            diag_left += current_state[(i + k) %
+                                                       rows][(j - k) % columns]
 
                         for k in range(K - 1, 1, -1):
                             for d in dir:
@@ -85,7 +97,6 @@ def alpha_beta_pruning(current_depth, max_ply, current_state, turn, alpha, beta,
 
         return best_move
 
-
     else:
         if not moves or current_depth == max_ply:
             state_evaluate_count += 1
@@ -114,6 +125,7 @@ def alpha_beta_pruning(current_depth, max_ply, current_state, turn, alpha, beta,
 
 
 def makeMove(currentState, currentRemark, timelimit):
+    global TURN
     # Compute the new state for a move.
     # This is a placeholder that just copies the current state.
     newState = BC.BC_state(currentState.board)
@@ -128,20 +140,47 @@ def makeMove(currentState, currentRemark, timelimit):
     move = ((6, 4), (3, 4))
 
     # Make up a new remark
-    newRemark = "I'll think harder in some future game. Here's my move"
-
-    return [[move, newState], newRemark]
+    new_utterance = utterance()
+    TURN += 1
+    return [[move, newState], new_utterance]
 
 
 def nickname():
-    return "Newman"
+    return "Spiderman"
 
 
 def introduce():
-    return "I'm Newman Barry, a newbie Baroque Chess agent."
+    return "I am Spiderman. I am a powerful player. I will beat you up."
 
 
 def prepare(player2Nickname):
     pass
 
 
+def zhash(board):
+    val = 0
+    for i in range(0, rows):
+        for j in range(0, columns):
+            piece = None
+            if board[i][j] != '-' and board[i][j].isupper():
+                piece = 0
+            if board[i][j] != '-' and board[i][j].islower():
+                piece = 1
+            if piece is not None:
+                val ^= zobristnum[i * columns + j][piece]
+    return val
+
+
+def utterance():
+    utterances = ["You are way too weak!",
+                  "Are you even trying?",
+                  "Use your brain!",
+                  "Five-year-old knows better than you!",
+                  "Such a boring match.",
+                  "Come on! Such a horrible choice.",
+                  "This is the best you can do? So disappointing!",
+                  "I have never met anyone that's as weak as you!",
+                  "Such a waste of time!",
+                  "I will show you my power!",
+                  "Do you really know how to play this game?"]
+    return utterances[TURN % 11]
