@@ -5,6 +5,7 @@ The beginnings of an agent that might someday play Baroque Chess.
 
 import BC_state_etc as BC
 import time
+from random import randint
 
 TURN = 0
 zobristnum = []
@@ -12,6 +13,8 @@ mySide = 'W'
 rows = 8
 columns = 8
 K = 8
+S = 64
+P = 2
 
 
 def static_eval(board):
@@ -154,7 +157,13 @@ def introduce():
 
 
 def prepare(player2Nickname):
-    pass
+    global mySide, P, zobristnum
+    mySide = mySide
+    zobristnum = [[0] * P for i in range(S)]
+    for i in range(S):
+        for j in range(P):
+            zobristnum[i][j] = randint(0, 100000000)
+    return "OK"
 
 
 def zhash(board):
