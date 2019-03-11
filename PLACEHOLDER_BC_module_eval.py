@@ -47,7 +47,9 @@ def get_neighbors(i, j):
         for col_factor in NEIGHBOR:
             neighbor_row = row_factor + i
             neighbor_col = col_factor + j
-            if neighbor_col != j and neighbor_row != i:
+            if neighbor_col == j and neighbor_row == i:
+                continue
+            else:
                 if neighbor_col >=0 and neighbor_col <  BOARDCOL and neighbor_row >= 0 and neighbor_row < BOARDROW:
                     neighbors.append((neighbor_row, neighbor_col))
 

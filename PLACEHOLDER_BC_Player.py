@@ -11,15 +11,17 @@ from random import randint
 
 TURN = 0
 zobristnum = []
-mySide = 'W'
+mySide = 1
 NUM_ROWS = 8
 NUM_COLS = 8
 start_time = 0
+SIDE={0:'B', 1:'W'}
 
-ALL_DIRECTION = {BC.NORTH:(0,1), BC.EAST:(1,0), BC.SOUTH:(0, -1), BC.WEST:(-1, 0), BC.NW:(-1, 1), BC.NE:(1,1), BC.SW:(-1, -1), BC.SE:(1, -1)}
+ALL_DIRECTION = {BC.NORTH:(-1,0), BC.SOUTH:(1,0), BC.WEST:(0, -1), BC.EAST:(0, 1), \
+                 BC.NW:(-1, -1), BC.NE:(-1,1), BC.SW:(1, -1), BC.SE:(1, 1)}
 
-def valid_moves(board):
-    board = BC.BC_state(board)
+def valid_moves(state):
+    board = BC.BC_state(state.board, state.whose_move)
     # print(board)
     whose_turn = board.whose_move
     moves = []
@@ -595,6 +597,10 @@ def introduce():
     return "I am Spiderman. I am a powerful player. I will beat you up."
 
 
+def makeMove(state):
+    return eval.static_eval(state)
+
+
 def prepare(player2Nickname):
     # global mySide, P, zobristnum
     # mySide = mySide
@@ -737,7 +743,7 @@ if __name__ == "__main__":
     MAX_PLY = 4 # How many moves ahead to consider
     ZOBRIST_HASHING = True # Use zobrist hashing if true
     TIME_LIMIT = 99 # Time limit to calculation in seconds
-    SIDE = 'W' # Which side should make the move
+    SIDE = 1 # Which side should make the move
 
     states_evaluated = 0
     retrieved_from_hash = 0
