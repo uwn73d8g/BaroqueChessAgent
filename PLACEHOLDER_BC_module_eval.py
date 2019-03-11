@@ -19,7 +19,7 @@ def static_eval(board, side):
 
     white_score = 0
     black_score = 0
-    for i, row in enumerate(board.board):
+    for i, row in enumerate(board):
         for j, piece in enumerate(row):
 
 
@@ -32,7 +32,7 @@ def static_eval(board, side):
             if piece // 2 == 7:
                 neighbors = get_neighbors(i, j)
                 for neighbor in neighbors:
-                    cur_piece = board.board[neighbor[0]][neighbor[1]]
+                    cur_piece = board[neighbor[0]][neighbor[1]]
                     if cur_piece % 2 == side:
                         score += PIECE_VALUES[cur_piece // 2]
 

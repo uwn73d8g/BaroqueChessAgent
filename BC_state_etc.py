@@ -95,9 +95,14 @@ F L I W K I L C
 
 class BC_state:
     def __init__(self, old_board=INITIAL, whose_move=WHITE):
-        new_board = [r[:] for r in old_board]  # Deeply copy the board.
-        self.board = new_board
-        self.whose_move = whose_move;
+      new_board = []  
+      for i in range(8):
+        new = []
+        for j in range(8):
+          new.append(old_board[i][j]) 
+        new_board.append(new) # Deeply copy the board.
+      self.board = new_board
+      self.whose_move = whose_move
 
     def __repr__(self): # Produce an ASCII display of the state.
         s = ''
