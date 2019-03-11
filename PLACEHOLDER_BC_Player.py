@@ -72,6 +72,7 @@ def pincer_capture(state, cur_pos):
         possible_firendly_tile = state.board[possible_firendly_pos[0]][possible_firendly_pos[1]]
         hasFirendly = possible_firendly_tile != 0 and possible_firendly_tile % 2 != state.whose_move
 
+        # check if there's enemy piece in between pincer and other friendly piece
         if hasEnemy and hasFirendly and possible_firendly_pos[0] >=0 and possible_firendly_pos[0] < NUM_COLS and possible_firendly_pos[1] >=0 and possible_firendly_pos < NUM_ROWS:
             state.board[possible_enemy_pos[0]][possible_enemy_pos[1]] == 0
 
