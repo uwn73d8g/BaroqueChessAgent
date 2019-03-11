@@ -1,4 +1,5 @@
 '''BC_state_etc.py
+
 S. Tanimoto, October 30, 2017
 
 This file includes functions to support building agents
