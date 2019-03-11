@@ -49,8 +49,12 @@ def pincer_moves(state, row, col):
         while new_row >= 0 and new_col >= 0 and new_row < NUM_ROWS and new_col < NUM_COLS:
             if state.board[new_row][new_col] == 0:
                 new_state = move_piece(state, (row, col), (new_row, new_col))
-                pincer_capture(new_state, (new_row, new_col))
-
+                moves.append(pincer_capture(new_state, (new_row, new_col)))
+                k+=1
+                new_row = row + k * dir[0]
+                new_col = col + k * dir[1]
+            else: break
+    return moves
 
 def pincer_capture(state, cur_pos):
     '''
