@@ -15,7 +15,7 @@ mySide = 1
 NUM_ROWS = 8
 NUM_COLS = 8
 start_time = 0
-SIDE={0:'B', 1:'W'}
+# SIDE={0:'B', 1:'W'}
 
 ALL_DIRECTION = {BC.NORTH:(-1,0), BC.SOUTH:(1,0), BC.WEST:(0, -1), BC.EAST:(0, 1), \
                  BC.NW:(-1, -1), BC.NE:(-1,1), BC.SW:(1, -1), BC.SE:(1, 1)}
@@ -151,7 +151,7 @@ def leaper_moves(state, row, col):
     for dir_key in range(8):
         dir = ALL_DIRECTION[dir_key]
         possible_capture = leaper_capture(state, (row, col), dir)
-        if possible_capture:
+        if possible_capture != state:
             moves.append(leaper_capture(state, (row, col), dir))
     for dir_key in range(8):
         dir = ALL_DIRECTION[dir_key]
@@ -603,7 +603,7 @@ def introduce():
 
 def staticEval(state):
     print(state)
-    return eval.static_eval(state)
+    return eval.static_eval(state, SIDE)
 
 
 def prepare(player2Nickname):
@@ -668,7 +668,6 @@ def demo(currentState, max_ply=3, hash=True, time_limit=10):
     # Checks the board to determing the position of the piece that moved
     for i in range(8):
         for j in range(8):
-            # print(newState)
             if newState.whose_move == 1:
                 # Old cell has piece on my side -> New cell is empty, then this is the old position 
                 if newState.board[i][j] % 2 == 1 and best_state.board[i][j] == 0:
@@ -730,7 +729,7 @@ def demo_search(current_state, current_depth, max_ply, player, alpha, beta, time
             min_eval = move_value
         if move_value > max_eval:
             max_eval = move_value
-        if player == 0:
+        if player == 1:
             if move_value > alpha:
                 alpha = move_value
                 if current_depth == 0:
@@ -749,11 +748,12 @@ def demo_search(current_state, current_depth, max_ply, player, alpha, beta, time
             times_pruned += 1
             return optimal_state
 
+    a = 5
     return optimal_state
     
 
 if __name__ == "__main__":
-    MAX_PLY = 4 # How many moves ahead to consider
+    MAX_PLY = 5 # How many moves ahead to consider
     ZOBRIST_HASHING = True # Use zobrist hashing if true
     TIME_LIMIT = 99 # Time limit to calculation in seconds
     SIDE = 1 # Which side should make the move
@@ -766,18 +766,18 @@ if __name__ == "__main__":
 
     # Edit the board to see the best next move!
     board = BC.parse('''
-c l i w k i l f
-p p p p p p p p
-- - - - - - - -
-- - - - - - - -
-- - - - - - - -
-- - - - - - - -
-P P P P P P P P
-F L I W K I L C''')
+- l i w k i l f 
+c p p p p p p p 
+p - - - - - - - 
+- - - - - - - - 
+P - - - - - - - 
+- - - - - - - - 
+- P P P P P P P 
+F L I W K I L C   ''')
     # print(board)
     # state = BC.BC_state()
 
-    state = BC.BC_state(board, SIDE)
+    state = BC.BC_state(board, 1)
 
     # zh.init_table()
     # print(state.board)
