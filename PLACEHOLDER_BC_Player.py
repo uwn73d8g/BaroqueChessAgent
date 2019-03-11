@@ -21,9 +21,12 @@ ALL_DIRECTION = {BC.NORTH:(-1,0), BC.SOUTH:(1,0), BC.WEST:(0, -1), BC.EAST:(0, 1
                  BC.NW:(-1, -1), BC.NE:(-1,1), BC.SW:(1, -1), BC.SE:(1, 1)}
 
 def valid_moves(state):
+    # print(state)
     board = BC.BC_state(state.board, state.whose_move)
-    # print(board)
+    # print(whose_turn)
     whose_turn = board.whose_move
+    # print(whose_turn)
+
     moves = []
     for i, row in enumerate(board.board):
         for j, tile in enumerate(row):
@@ -414,7 +417,6 @@ def imitator_capture(state, cur_pos, dir, imitating, k):
 
         if isCaptured:
             revert_empty(new_state)
-            # yield new_state
             result.append(new_state)
             # reset board for next move type
             new_state = move_piece(state, cur_pos, (new_row, new_col))
@@ -444,7 +446,6 @@ def imitator_capture(state, cur_pos, dir, imitating, k):
 
         if isCaptured:
             revert_empty(new_state)
-            # yield new_state
             result.append(new_state)
             captured = True
 
@@ -452,7 +453,6 @@ def imitator_capture(state, cur_pos, dir, imitating, k):
         # at least one move: the move that just changes the square of the imitator.
         if not captured:
             revert_empty(new_state)
-            # yield new_state
             result.append(new_state)
 
 
@@ -597,8 +597,8 @@ def introduce():
     return "I am Spiderman. I am a powerful player. I will beat you up."
 
 
-def makeMove(state):
-    return eval.static_eval(state)
+def staticEval(state):
+    return eval.static_eval(state, state.whose_turn)
 
 
 def prepare(player2Nickname):
@@ -648,6 +648,7 @@ def demo(currentState, max_ply=10, hash=True, time_limit=10):
     current_max_ply = 1
     while current_max_ply <= max_ply:
         last_best = best_state
+        # print(newState)
         best_state = demo_search(newState, 0, current_max_ply, newState.whose_move, float("-inf"), float("inf"), time_limit)
         current_max_ply += 1
         end_time = time.time()
@@ -661,7 +662,7 @@ def demo(currentState, max_ply=10, hash=True, time_limit=10):
     # Checks the board to determing the position of the piece that moved
     for i in range(8):
         for j in range(8):
-            if newState.whose_move == 'W':
+            if newState.whose_move == 0:
                 # Old cell has piece on my side -> New cell is empty, then this is the old position 
                 if newState.board[i][j] % 2 == 1 and best_state.board[i][j] == 0:
                     position_A = (i, j)
@@ -694,14 +695,17 @@ def demo_search(current_state, current_depth, max_ply, player, alpha, beta, time
     current_time = time.time()
     if current_time - start_time > time_lim * 0.9:
         return current_state
+    # print(current_state)
 
     moves = valid_moves(current_state)
+    # print(moves)
     if not moves or current_depth == max_ply:
         return current_state
 
     optimal_state = current_state
     # For each valid move, find the best move in the next ply
     for move in moves:
+        print(move)
         state = demo_search(move, current_depth + 1, max_ply, 1 - player, alpha, beta, time_lim)
         move_value = 0
         # hash_value = hash.hash_state(state)
@@ -761,12 +765,13 @@ p p p p p p p p
 - - - - - - - -
 P P P P P P P P
 F L I W K I L C''')
-    print(board)
+    # print(board)
     # state = BC.BC_state()
 
     state = BC.BC_state(board, SIDE)
 
     # zh.init_table()
+    # print(state.board)
     next_move = demo(state, MAX_PLY, ZOBRIST_HASHING, TIME_LIMIT)
     if next_move[0] is None:
         print("CAN'T MOVE!")

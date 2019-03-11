@@ -1,1 +1,1 @@
-move
+print
