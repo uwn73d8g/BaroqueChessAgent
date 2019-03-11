@@ -1,4 +1,4 @@
-from BC_state_etc import BC_state
+import BC_state_etc as BC_state
 DIAGONAL_MOVES = [(1,-1), (1,1), (-1,1), (-1,-1)]
 ROOK_MOVES = [(0,1), (1,0), (-1,0), (0,-1)]
 QUEEN_MOVES = ROOK_MOVES + DIAGONAL_MOVES
@@ -12,8 +12,8 @@ PIECE_VALUES = {0: 0, 1: 1, 2: 2, 3: 5, 4: 5, 5: 2, 6: 10000, 7: 8}
 # ROOK_MOVES = [(0, 1), (1, 0), (-1, 0), (0, -1)]
 # QUEEN_MOVES = ROOK_MOVES + DIAGONAL_MOVES
 
-BOARDROW = len(BC_state.board)
-BOARDCOL = len(BC_state.board[0])
+BOARDROW = 8
+BOARDCOL = 8
 def static_eval(board, side):
     score = 0
 
