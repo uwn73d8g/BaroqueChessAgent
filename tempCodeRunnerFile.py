@@ -1,1 +1,1 @@
-print
+BC

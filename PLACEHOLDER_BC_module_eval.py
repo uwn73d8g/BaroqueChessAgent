@@ -14,12 +14,14 @@ PIECE_VALUES = {0: 0, 1: 1, 2: 2, 3: 5, 4: 5, 5: 2, 6: 10000, 7: 8}
 
 BOARDROW = 8
 BOARDCOL = 8
-def static_eval(board, side):
+def static_eval(board):
+    print(board)
     score = 0
 
     white_score = 0
     black_score = 0
-    for i, row in enumerate(board):
+    # print(board.board)
+    for i, row in enumerate(board.board):
         for j, piece in enumerate(row):
 
 
@@ -31,9 +33,10 @@ def static_eval(board, side):
             # calculate how many enemy's pieces are frozen by friendly freezer
             if piece // 2 == 7:
                 neighbors = get_neighbors(i, j)
+                # print(neighbors)
                 for neighbor in neighbors:
-                    cur_piece = board[neighbor[0]][neighbor[1]]
-                    if cur_piece % 2 == side:
+                    cur_piece = board.board[neighbor[0]][neighbor[1]]
+                    if cur_piece % 2 == 0:
                         score += PIECE_VALUES[cur_piece // 2]
 
 

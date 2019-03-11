@@ -22,6 +22,8 @@ ALL_DIRECTION = {BC.NORTH:(-1,0), BC.SOUTH:(1,0), BC.WEST:(0, -1), BC.EAST:(0, 1
 
 def valid_moves(state):
     # print(state)
+    if state is None:
+        return []
     board = BC.BC_state(state.board, state.whose_move)
     # print(whose_turn)
     whose_turn = board.whose_move
@@ -148,7 +150,9 @@ def leaper_moves(state, row, col):
     moves=[]
     for dir_key in range(8):
         dir = ALL_DIRECTION[dir_key]
-        moves.append(leaper_capture(state, (row, col), dir))
+        possible_capture = leaper_capture(state, (row, col), dir)
+        if possible_capture:
+            moves.append(leaper_capture(state, (row, col), dir))
     for dir_key in range(8):
         dir = ALL_DIRECTION[dir_key]
         k=1
@@ -232,7 +236,7 @@ def coordinator_capture(state, cur_pos):
         coor1 = state.board[cur_pos[0]][king_pos[1]]
         coor2 = state.board[king_pos[0]][cur_pos[1]]
         if coor1 != 0 and coor1 % 2 != state.whose_move:
-            [cur_pos[0]][king_pos[1]] = 0
+            state.board[cur_pos[0]][king_pos[1]] = 0
         if coor2 != 0 and coor2 % 2 != state.whose_move:
             state.board[king_pos[0]][cur_pos[1]] = 0
     return state
@@ -499,7 +503,7 @@ def alpha_beta_pruning(current_depth, max_ply, current_state, turn, alpha, beta,
         else:
             move_value = eval_val(state)
             hash.table[hash_value] = move_value
-        if turn == 'W':
+        if turn == 1:
             if eval_val > alpha:
                 alpha = eval_val
                 best_move = state
@@ -540,11 +544,11 @@ def makeMove(currentState, currentRemark, timelimit=10):
 
     # Compute the new state for a move.
     # This is a placeholder that just copies the current state.
-    newState = BC.BC_state(currentState.board, currentState.whose_move)
+    newState = BC.BC_state(currentState.board, 1 - currentState.whose_move)
 
     # Fix up whose turn it will be.
     # newState.whose_move = currentState.whose_move
-
+    # newState.whose_move = 1 - currentState.whose_move
     best_state = newState
     last_best = None
     current_max_ply = 1
@@ -579,13 +583,13 @@ def makeMove(currentState, currentRemark, timelimit=10):
     move = (position_A, position_B)
     if position_A is None:
         move = None
-    #print('the coordinates: ' + str(move))
+    print('the coordinates: ' + str(move))
 
     # Change who's turn
     best_state.whose_move = 1 - currentState.whose_move
 
     # Make up a new remark
-    newRemark = "I'll think harder in some future game. Here's my move"
+    newRemark = utterance()
 
     return [[move, best_state], newRemark]
 
@@ -598,7 +602,8 @@ def introduce():
 
 
 def staticEval(state):
-    return eval.static_eval(state, state.whose_turn)
+    print(state)
+    return eval.static_eval(state)
 
 
 def prepare(player2Nickname):
@@ -632,24 +637,25 @@ def utterance():
     return utterances[TURN % 11]
 
 # demo use
-def demo(currentState, max_ply=10, hash=True, time_limit=10):
+def demo(currentState, max_ply=3, hash=True, time_limit=10):
     global start_time
     start_time = time.time()
 
     # Compute the new state for a move.
     # This is a placeholder that just copies the current state.
     newState = BC.BC_state(currentState.board, currentState.whose_move)
-
+    # print(newState)
     # Fix up whose turn it will be.
     # newState.whose_move = currentState.whose_move
-
+    # newState.whose_move = 1 - currentState.whose_move
     best_state = newState
     last_best = None
     current_max_ply = 1
-    while current_max_ply <= max_ply:
+    while current_max_ply < max_ply:
         last_best = best_state
-        # print(newState)
+        print(newState.whose_move)
         best_state = demo_search(newState, 0, current_max_ply, newState.whose_move, float("-inf"), float("inf"), time_limit)
+        # print(newState)
         current_max_ply += 1
         end_time = time.time()
         if end_time - start_time > time_limit * 0.90:
@@ -662,7 +668,8 @@ def demo(currentState, max_ply=10, hash=True, time_limit=10):
     # Checks the board to determing the position of the piece that moved
     for i in range(8):
         for j in range(8):
-            if newState.whose_move == 0:
+            # print(newState)
+            if newState.whose_move == 1:
                 # Old cell has piece on my side -> New cell is empty, then this is the old position 
                 if newState.board[i][j] % 2 == 1 and best_state.board[i][j] == 0:
                     position_A = (i, j)
@@ -682,7 +689,7 @@ def demo(currentState, max_ply=10, hash=True, time_limit=10):
 
     # Change who's turn
     best_state.whose_move = 1 - currentState.whose_move
-
+    # print(best_state)
     # Make up a new remark
     newRemark = "I'll think harder in some future game. Here's my move"
 
@@ -705,7 +712,7 @@ def demo_search(current_state, current_depth, max_ply, player, alpha, beta, time
     optimal_state = current_state
     # For each valid move, find the best move in the next ply
     for move in moves:
-        print(move)
+        # print(move)
         state = demo_search(move, current_depth + 1, max_ply, 1 - player, alpha, beta, time_lim)
         move_value = 0
         # hash_value = hash.hash_state(state)
@@ -714,14 +721,16 @@ def demo_search(current_state, current_depth, max_ply, player, alpha, beta, time
         #     move_value = hash.table[hash_value]
         #     retrieved_from_hash += 1
         # else:
-        move_value = eval.static_eval(board, mySide)
+        move_value = staticEval(state)
+        # print(move_value)
+        # print(min_eval)
         #     hash.table[hash_value] = move_value
         #     states_evaluated += 1
         if move_value < min_eval:
             min_eval = move_value
         if move_value > max_eval:
             max_eval = move_value
-        if player == 'W':
+        if player == 0:
             if move_value > alpha:
                 alpha = move_value
                 if current_depth == 0:
