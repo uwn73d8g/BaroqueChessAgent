@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cfe1761e-452e-46bc-8100-789fdb5256f3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PLACEHOLDER_BC_Player.py" beforeDir="false" afterPath="$PROJECT_DIR$/PLACEHOLDER_BC_Player.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PLACEHOLDER_BC_module_eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/PLACEHOLDER_BC_module_eval.py" afterDir="false" />
     </list>
@@ -25,11 +24,11 @@
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="true">
+          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/PLACEHOLDER_BC_Player.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="141">
-                  <caret line="31" selection-start-line="31" selection-end-line="31" />
+                <state relative-caret-position="267">
+                  <caret line="775" column="32" selection-start-line="775" selection-start-column="32" selection-end-line="775" selection-end-column="32" />
                   <folding>
                     <element signature="e#94#119#0" expanded="true" />
                   </folding>
@@ -37,11 +36,11 @@
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="false">
+          <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/PLACEHOLDER_BC_module_eval.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="180">
-                  <caret line="43" selection-start-line="43" selection-end-line="43" />
+                <state relative-caret-position="280">
+                  <caret line="65" column="27" selection-start-line="65" selection-start-column="27" selection-end-line="65" selection-end-column="27" />
                 </state>
               </provider>
             </entry>
@@ -63,12 +62,12 @@
         </leaf>
       </split-first>
       <split-second>
-        <leaf>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/BC_state_etc.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="389">
-                  <caret line="60" column="13" selection-start-line="60" selection-end-line="60" selection-end-column="13" />
+                <state relative-caret-position="616">
+                  <caret line="92" column="7" selection-start-line="92" selection-start-column="7" selection-end-line="92" selection-end-column="8" />
                 </state>
               </provider>
             </entry>
@@ -90,6 +89,9 @@
       <find>static_eval</find>
       <find>mySide</find>
       <find>get_neigh</find>
+      <find>'W'</find>
+      <find>MAX_</find>
+      <find>leaper_moves</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -99,12 +101,12 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/PLACEHOLDER_BC_module_zhash.py" />
-        <option value="$PROJECT_DIR$/PLACEHOLDER_BC_module_eval.py" />
         <option value="$PROJECT_DIR$/PLACEHOLDER_BC_Player.py" />
+        <option value="$PROJECT_DIR$/PLACEHOLDER_BC_module_eval.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" fullScreen="true">
+  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
     <option name="y" value="23" />
     <option name="width" value="1680" />
     <option name="height" value="949" />
@@ -114,7 +116,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -126,6 +127,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -185,7 +187,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
+    <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12236287" />
@@ -193,8 +195,8 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32959184" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.4" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32959184" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.43469387" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -212,13 +214,21 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/PLACEHOLDER_BC_Player.py</url>
-          <line>31</line>
-          <option name="timeStamp" value="12" />
+          <line>655</line>
+          <option name="timeStamp" value="18" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/PLACEHOLDER_BC_module_zhash.py" />
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/codecs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="309" selection-start-line="309" selection-end-line="309" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/PlayerSkeletonA.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
@@ -229,13 +239,13 @@
     <entry file="file://$PROJECT_DIR$/PlayerSkeletonB.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/PLACEHOLDER_BC_module_zhash.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/codecs.py">
+    <entry file="file://$PROJECT_DIR$/PLACEHOLDER_BC_Player.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="309" selection-start-line="309" selection-end-line="309" />
+        <state relative-caret-position="267">
+          <caret line="775" column="32" selection-start-line="775" selection-start-column="32" selection-end-line="775" selection-end-column="32" />
+          <folding>
+            <element signature="e#94#119#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -248,18 +258,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PLACEHOLDER_BC_module_eval.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="43" selection-start-line="43" selection-end-line="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PLACEHOLDER_BC_Player.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
-          <caret line="31" selection-start-line="31" selection-end-line="31" />
-          <folding>
-            <element signature="e#94#119#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="280">
+          <caret line="65" column="27" selection-start-line="65" selection-start-column="27" selection-end-line="65" selection-end-column="27" />
         </state>
       </provider>
     </entry>
