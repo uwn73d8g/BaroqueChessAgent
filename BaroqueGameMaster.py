@@ -23,13 +23,13 @@ if len(sys.argv) > 1:
     if len(sys.argv) > 3:
         TIME_PER_MOVE = float(sys.argv[3])
 else:
-    import PlayerSkeletonA as player1
+    import PLACEHOLDER_BC_Player as player1
     import PlayerSkeletonB as player2
 
 import BC_state_etc as BC
 
 VALIDATE_MOVES = False # If players are trusted not to cheat, this could be turned off to save time.
-if VALIDATE_MOVES: import bc_move_validator as V
+# if VALIDATE_MOVES: import bc_move_validator as V
 
 from winTester import winTester
 
@@ -193,7 +193,7 @@ def timeout(func, args=(), kwargs={}, timeout_duration=1, default=None):
             try:
                 self.result = func(*args, **kwargs)
             except Exception as e:
-                print("Seems there was an exception during play by "+CURRENT_PLAYER+":\n"+str(e))
+                print("Seems there was an exception during play by "+str(CURRENT_PLAYER)+":\n"+str(e))
                 print(sys.exc_info())
                 self.result = default
 

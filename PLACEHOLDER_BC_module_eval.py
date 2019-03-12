@@ -16,31 +16,6 @@ BOARD_FACTOR=[[],
               [],
               []]
 
-# def static_eval(board, side):
-#     score = 0
-#
-#     white_score = 0
-#     black_score = 0
-#     for i, row in enumerate(board):
-#         for j, piece in enumerate(row):
-#
-#
-#             # calculate how many friendly pieces are still in the board
-#             if piece % 2 == 0:
-#                 score += PIECE_VALUES[piece // 2]
-#
-#
-#             # calculate how many enemy's pieces are frozen by friendly freezer
-#             if piece // 2 == 7:
-#                 neighbors = get_neighbors(i, j)
-#                 for neighbor in neighbors:
-#                     cur_piece = board[neighbor[0]][neighbor[1]]
-#                     if cur_piece % 2 == side:
-#                         score += PIECE_VALUES[cur_piece // 2]
-#
-#
-#     return score
-
 from BC_state_etc import BC_state
 import time
 
@@ -50,7 +25,7 @@ import time
 # Like in chess how we associate a given point value to each piece.
 # the most basic form of understanding the position of the game
 # Uses the piece number / 2 as the key and the piece value as the value
-# 1 = Pincer, 2 = Coordinator, 3 = Leaperm 4 = imitator, 5 = withdrawer, 6 = King, 7 = Freezer
+# 1 = Pincer, 2 = Coordinator, 3 = Leaper, 4 = imitator, 5 = withdrawer, 6 = King, 7 = Freezer
 # 0 = EMPTY square
 PIECE_VALUES = {0: 0, 1: 1, 2: 2, 3: 5, 4: 5, 5: 2, 6: 100, 7: 8}
 weights = {'piece': 1, 'freezing': 1, 'withdraw': 1, 'pinch': 1, 'king_Def': 10}
@@ -59,8 +34,8 @@ DIAGONAL_MOVES = [(1, -1), (1, 1), (-1, 1), (-1, -1)]
 ROOK_MOVES = [(0, 1), (1, 0), (-1, 0), (0, -1)]
 QUEEN_MOVES = ROOK_MOVES + DIAGONAL_MOVES
 
-NUM_ROWS = 0
-NUM_COLS = 0
+NUM_ROWS = 8
+NUM_COLS = 8
 
 
 def static_eval(board, side):
@@ -73,9 +48,7 @@ def static_eval(board, side):
     for i, row in enumerate(board.board):
         for j, piece in enumerate(row):
 
-            ortho_neighbors = get_neighbors(board, i, j, ROOK_MOVES)
-            diag_neighbors = get_neighbors(board, i, j, DIAGONAL_MOVES)
-            all_neighbors = ortho_neighbors + diag_neighbors
+            all_neighbors = get_neighbors(board, (i, j), QUEEN_MOVES)
 
             # find piece score: you get a better score if you have more pieces
             if piece % 2 == 0:
@@ -127,14 +100,14 @@ def static_eval(board, side):
 
 # Checks which pieces are in the neighboring squares directly adjacent to the given piece
 # (the piece sitting at (i,j)) in the given directions
-def get_neighbors(board, i, j, directions):
+def get_neighbors(board, pos, directions):
     neighbors = []
 
     for (dr, dc) in directions:
-        new_row = i + dr
-        new_col = j + dc
+        new_row = pos[0] + dr
+        new_col = pos[1] + dc
         if new_row >= 0 and new_col >= 0 and new_row < NUM_ROWS and new_col < NUM_COLS:
-            neighbors.append(board.board[i + dr][j + dc])
+            neighbors.append(board.board[pos[0] + dr][pos[1] + dc])
 
     return neighbors
 
@@ -182,19 +155,19 @@ def check_withdrawer(board, i, j):
     return takeable_neighbors
 
 
-def get_neighbors(i, j):
-    neighbors = []
+# def get_neighbors(i, j):
+#     neighbors = []
 
-    for row_factor in NEIGHBOR:
-        for col_factor in NEIGHBOR:
-            neighbor_row = row_factor + i
-            neighbor_col = col_factor + j
-            if neighbor_col == j and neighbor_row == i:
-                continue
-            else:
-                if neighbor_col >=0 and neighbor_col <  BOARDCOL and neighbor_row >= 0 and neighbor_row < BOARDROW:
-                    neighbors.append((neighbor_row, neighbor_col))
+#     for row_factor in NEIGHBOR:
+#         for col_factor in NEIGHBOR:
+#             neighbor_row = row_factor + i
+#             neighbor_col = col_factor + j
+#             if neighbor_col == j and neighbor_row == i:
+#                 continue
+#             else:
+#                 if neighbor_col >=0 and neighbor_col <  BOARDCOL and neighbor_row >= 0 and neighbor_row < BOARDROW:
+#                     neighbors.append((neighbor_row, neighbor_col))
 
-    return neighbors
+#     return neighbors
 
 
