@@ -7,6 +7,7 @@ import BC_state_etc as BC
 import PLACEHOLDER_BC_module_eval as eval
 import zhash as hash
 import time
+import random
 from random import randint
 
 TURN = 0
@@ -303,11 +304,11 @@ def pincer_capture(state, cur_pos):
 
 
             possible_firendly_tile = state.board[possible_firendly_pos[0]][possible_firendly_pos[1]]
-            hasFirendly = possible_firendly_tile != 0 and possible_firendly_tile % 2 != state.whose_move
+            hasFirendly = possible_firendly_tile != 0 and possible_firendly_tile % 2 == state.whose_move
 
         # check if there's enemy piece in between pincer and other friendly piece
         if hasEnemy and hasFirendly and hasSpace:
-            state.board[possible_enemy_pos[0]][possible_enemy_pos[1]] == 0
+            state.board[possible_enemy_pos[0]][possible_enemy_pos[1]] = 0
 
     return state
 
@@ -463,7 +464,7 @@ def imitator_capture(state, cur_pos, dir, imitating, k):
 
 
 def not_frozen(board, row, col):
-    neighbors = eval.get_neighbors(row, col)
+    neighbors = eval.get_neighbor(row, col)
     for neighbor in neighbors:
         piece = board.board[neighbor[0]][neighbor[1]]
         if piece // 2 == 7 and piece % 7 != board.whose_move:
@@ -718,7 +719,9 @@ def demo_search(current_state, current_depth, max_ply, player, alpha, beta, time
         #     move_value = hash.table[hash_value]
         #     retrieved_from_hash += 1
         # else:
-        move_value = eval.static_eval(board, mySide)
+        # move_value = eval.static_eval(state)
+        # move_value=random.randint(-100, 100)
+        move_value=eval.static_eval(state)
         #     hash.table[hash_value] = move_value
         #     states_evaluated += 1
         if move_value < min_eval:
@@ -751,7 +754,7 @@ def demo_search(current_state, current_depth, max_ply, player, alpha, beta, time
 if __name__ == "__main__":
     MAX_PLY = 5 # How many moves ahead to consider
     ZOBRIST_HASHING = True # Use zobrist hashing if true
-    TIME_LIMIT = 99 # Time limit to calculation in seconds
+    TIME_LIMIT = 10 # Time limit to calculation in seconds
     SIDE = 1 # Which side should make the move
 
     states_evaluated = 0
@@ -762,14 +765,14 @@ if __name__ == "__main__":
 
     # Edit the board to see the best next move!
     board = BC.parse('''
-- l i w k i l f 
-c p p p p p p p 
-p - - - - - - - 
+c l i w k i l f 
+p p p - - p p p 
+- - - P - - - - 
+- - - - p - - - 
+- - - P P - - - 
 - - - - - - - - 
-P - - - - - - - 
-- - - - - - - - 
-- P P P P P P P 
-F L I W K I L C   ''')
+- P P - - P P P 
+F L I W K I L C       ''')
     # print(board)
     # state = BC.BC_state()
 
