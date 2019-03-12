@@ -48,7 +48,7 @@ def init_table():
         for j in range(8):
             cell = {}
             for piece in PIECES:
-                cell[piece] = randint(0,  4)
+                cell[piece] = randint(0, 10000)
             row.append(cell)
         table.append(row)
 

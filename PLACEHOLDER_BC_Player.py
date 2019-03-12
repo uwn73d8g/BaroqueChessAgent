@@ -545,11 +545,11 @@ def makeMove(currentState, currentRemark, timelimit=10):
 
     # Compute the new state for a move.
     # This is a placeholder that just copies the current state.
-    newState = BC.BC_state(currentState.board, currentState.whose_move)
+    newState = BC.BC_state(currentState.board, 1 - currentState.whose_move)
 
     # Fix up whose turn it will be.
     # newState.whose_move = currentState.whose_move
-
+    # newState.whose_move = 1 - currentState.whose_move
     best_state = newState
     last_best = None
     current_max_ply = 1
@@ -584,13 +584,13 @@ def makeMove(currentState, currentRemark, timelimit=10):
     move = (position_A, position_B)
     if position_A is None:
         move = None
-    #print('the coordinates: ' + str(move))
+    print('the coordinates: ' + str(move))
 
     # Change who's turn
     best_state.whose_move = 1 - currentState.whose_move
 
     # Make up a new remark
-    newRemark = "I'll think harder in some future game. Here's my move"
+    newRemark = utterance()
 
     return [[move, best_state], newRemark]
 
@@ -603,7 +603,8 @@ def introduce():
 
 
 def staticEval(state):
-    return eval.static_eval(state, state.whose_turn)
+    print(state)
+    return eval.static_eval(state, SIDE)
 
 
 def prepare(player2Nickname):
@@ -637,24 +638,25 @@ def utterance():
     return utterances[TURN % 11]
 
 # demo use
-def demo(currentState, max_ply=10, hash=True, time_limit=10):
+def demo(currentState, max_ply=3, hash=True, time_limit=10):
     global start_time
     start_time = time.time()
 
     # Compute the new state for a move.
     # This is a placeholder that just copies the current state.
     newState = BC.BC_state(currentState.board, currentState.whose_move)
-
+    # print(newState)
     # Fix up whose turn it will be.
     # newState.whose_move = currentState.whose_move
-
+    # newState.whose_move = 1 - currentState.whose_move
     best_state = newState
     last_best = None
     current_max_ply = 1
     while current_max_ply < max_ply:
         last_best = best_state
-        # print(newState)
+        print(newState.whose_move)
         best_state = demo_search(newState, 0, current_max_ply, newState.whose_move, float("-inf"), float("inf"), time_limit)
+        # print(newState)
         current_max_ply += 1
         end_time = time.time()
         if end_time - start_time > time_limit * 0.90:
@@ -687,7 +689,7 @@ def demo(currentState, max_ply=10, hash=True, time_limit=10):
 
     # Change who's turn
     best_state.whose_move = 1 - currentState.whose_move
-
+    # print(best_state)
     # Make up a new remark
     newRemark = "I'll think harder in some future game. Here's my move"
 
