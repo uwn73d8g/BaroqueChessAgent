@@ -13,6 +13,12 @@ VERSION = '0.8-BETA'
 # Get names of players and time limit from the command line.
 
 import sys
+import time
+from os import PathLike
+
+import BC_state_etc as BC
+from winTester import winTester
+
 TIME_PER_MOVE = 0.5 # default time limit is half a second.
 TURN_LIMIT = 5   # Good for testing.
 #TURN_LIMIT = 100 # Terminates runaway games.
@@ -26,12 +32,10 @@ else:
     import PLACEHOLDER_BC_Player as player1
     import PlayerSkeletonB as player2
 
-import BC_state_etc as BC
 
 VALIDATE_MOVES = False # If players are trusted not to cheat, this could be turned off to save time.
 # if VALIDATE_MOVES: import bc_move_validator as V
 
-from winTester import winTester
 
 CURRENT_PLAYER = BC.WHITE
 
@@ -178,8 +182,6 @@ def runGame():
       print("Congratulations to the winner: "+WINNER)
 
 
-import sys
-import time
 def timeout(func, args=(), kwargs={}, timeout_duration=1, default=None):
     '''This function will spawn a thread and run the given function using the args, kwargs and 
     return the given default value if the timeout_duration is exceeded 
@@ -193,6 +195,9 @@ def timeout(func, args=(), kwargs={}, timeout_duration=1, default=None):
             try:
                 self.result = func(*args, **kwargs)
             except Exception as e:
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                print(exc_type, fname, exc_tb.tb_lineno)
                 print("Seems there was an exception during play by "+str(CURRENT_PLAYER)+":\n"+str(e))
                 print(sys.exc_info())
                 self.result = default
