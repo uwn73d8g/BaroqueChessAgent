@@ -1,132 +1,121 @@
+# import random
+# # def init_table():
+# zobTable = [[[random.randint(1,2**64 - 1) for i in range(12)]for j in range(8)]for k in range(8)]
+# # for i in zobTable:
+# #     for j in i:
+# #         for k in j:
+# #             print(k),
+# #         print 
 
-import random
-zobTable = [[[random.getrandbits(64) for i in range(12)]for j in range(8)]for k in range(8)]
 
-def table():
-    return zobTable
-    
-for i in zobTable:
-    for j in i:
-        for k in j:
-            print(k),
-        print 
-
-# Returns the hash value for a given state
-# def hash_state(state):
-#     global zobTable
-#     h = 0
-#     board = state.board
-#     for row in range(0, 7):
-#         for column in range(0, 7):
-#             piece = board[row][column]
-#             if piece != 0:
-#                 # print(row)
-#                 # print(column)
-#                 print(piece)
-#                 h ^= zobTable[row][column][piece]
-#     return h
-INIT_TO_CODE = {'p':2, 'P':3, 'c':4, 'C':5, 'l':6, 'L':7, 'i':8, 'I':9,
-  'w':10, 'W':11, 'k':12, 'K':13, 'f':14, 'F':15, '-':0}
-def hash_state(board):
-    h = 0
-    for i in range(8):
-        for j in range(8):
-            # print(i)
-            # print(j)
-            # print(board.board[i][j])
-            num = board.board[i][j]
-            if num != '-':
-                piece = INIT_TO_CODE.get(num)
-                # print(i)
-                # print(j)
-                if piece is None:
-                    break
-                h ^= zobTable[i][j][piece]
-                # print(h)
-            # else
-    return h
-
-# def indexing(piece):
-    ''' mapping each piece to a particular number'''
-    if (piece=='P'):
-        return 0
-    if (piece=='N'):
-        return 1
-    if (piece=='B'):
-        return 2
-    if (piece=='R'):
-        return 3
-    if (piece=='Q'):
-        return 4
-    if (piece=='K'):
-        return 5
-    if (piece=='p'):
-        return 6
-    if (piece=='n'):
-        return 7
-    if (piece=='b'):
-        return 8
-    if (piece=='r'):
-        return 9
-    if (piece=='q'):
-        return 10
-    if (piece=='k'):
-        return 11
-    else:
-        return 0
-
-# def computeHash(board):
+# def hash_state(board):
 #     h = 0
 #     for i in range(8):
 #         for j in range(8):
-#            # print board[i][j]
-#             if board[i][j] != '-':
-#                 piece = indexing(board[i][j])
-#                 h ^= zobTable[i][j][piece]
+#             print(board.board[i][j])
+#             if board.board[i][j] != 0:
+#                 piece = board.board[i][j]
+#                 # print(piece)
+#                 h ^= zobTable[i][j][piece % 2]
 #     return h
-# def main():
-#     # Upper Case are white pieces
-#     # Lower Case are black pieces
 
-#     # a [8][8] format board
-#     board = [
-#         ['-', '-', '-', 'K', '-', '-', '-', '-'],
-#         ['-', 'R', '-', '-', '-', '-', 'Q', '-'],
-#         ['-', '-', '-', '-', '-', '-', '-', '-'],
-#         ['-', 'P', '-', '-', '-', '-', 'p', '-'],
-#         ['-', '-', '-', '-', '-', 'p', '-', '-'],
-#         ['-', '-', '-', '-', '-', '-', '-', '-'],
-#         ['p', '-', '-', '-', 'b', '-', '-', 'q'],
-#         ['-', '-', '-', '-', 'n', '-', '-', 'k']
-#     ]
+import BC_state_etc as BC
+from random import randint
+import math
 
-#     hashValue = computeHash(board)
-#     print "Current Board is :"
-#     for i in board:
-#         for j in i:
-#             print j,
-#         print
+PIECES = {0:'-',2:'p',3:'P',4:'c',5:'C',6:'l',7:'L',8:'i',9:'I',
+  10:'w',11:'W',12:'k',13:'K',14:'f',15:'F'}
 
-#     print "\nThe Current hash is : ",hashValue,"\n"
+ZOBRIST_INDEXES = {'p':0, 'P':1, 'c':2, 'C':3, 'l':4, 'L':5, 'i':6, 'I':7,
+  'w':8, 'W':9, 'k':10, 'K':11, 'f':12, 'F':13, }
+ZOBRIST_NUMBERS = []
+ZHASH = None
 
-#     # an exaple of channge in game state and how it affects the hashes
+TRANSPOSITION_TABLE = []
+TABLE_SIZE = 0
 
-#     # move white Rook to at a new postion in right
-#     piece = board[1][1]
+INITIAL = BC.parse('''
+c l i w k i l f
+p p p p p p p p
+- - - - - - - -
+- - - - - - - -
+- - - - - - - -
+- - - - - - - -
+P P P P P P P P
+F L I W K I L C
+''')
 
-#     board[1][1] = '-'
-#     hashValue ^= zobTable[1][1][indexing(piece)]
+BOARD_ONE_MOVE = BC.parse('''
+c l i w k i l f
+p p p p p p p -
+- - - - - - - p
+- - - - - - - -
+- - - - - - - -
+- - - - - - - -
+P P P P P P P P
+F L I W K I L C
+''')
 
-#     board[3][1] = piece
-#     hashValue ^= zobTable[3][1][indexing(piece)]
-#     print "The new board is :"
-#     for i in board:
-#         for j in i:
-#             print j,
-#         print
+def init_zhash():
+    global ZOBRIST_NUMBERS
+    for r in range(8):
+        ZOBRIST_NUMBERS.append([])
+        for c in range(8):
+            ZOBRIST_NUMBERS[r].append([])
+            for p in range(14):
+                ZOBRIST_NUMBERS[r][c].append(0)
+    for i in range(8):
+        for j in range(8):
+            for p in range(14):
+                ZOBRIST_NUMBERS[i][j][p] = \
+                    randint(0, math.pow(2,64))
 
-#     print "\nHash after the move is : ",hashValue,"\n"
+def zhash(board):
+    global ZOBRIST_NUMBERS
+    hash = 0
+    for r in range(8):
+        for c in range(8):
+            piece = PIECES[board[r][c]]
+            if piece != '-':
+                #print(piece)
+                index = ZOBRIST_INDEXES[piece]
+                hash ^= ZOBRIST_NUMBERS[r][c][index]
+                #print(hash)
+    return hash
 
-# if __name__ == "__main__":
-#     main()
+def update_zhash_piece_movement(start, dest, piece, hash):
+    piece = PIECES[piece]
+    index = ZOBRIST_INDEXES[piece]
+    hash ^= ZOBRIST_NUMBERS[start[0]][start[1]][index]
+    hash ^= ZOBRIST_NUMBERS[dest[0]][dest[1]][index]
+    return hash
 
+def update_zhash_remove_piece(location, piece, hash):
+    piece = PIECES[piece]
+    index = ZOBRIST_INDEXES[piece]
+    hash ^= ZOBRIST_NUMBERS[location[0]][location[1]][index]
+    return hash
+
+
+class Hash_Entry:
+    def __init__(self, key, eval, type, ply, best_move):
+        self.key = key
+        self.eval = eval
+        self.type = type
+        self.ply = ply
+        self.best_move = best_move
+
+
+'''prepare("what up")
+#initZhash()
+hash = zHash(INITIAL)
+print(hash)
+hash2 = zHash(INITIAL)
+print(hash2)
+updated_hash = update_zhash_piece_movement((1,7), (2,7), 2, hash2)
+hash3 = zHash(BOARD_ONE_MOVE)
+print("\n")
+print(hash3)
+print(updated_hash)
+print(hash)
+print(hash2)'''
