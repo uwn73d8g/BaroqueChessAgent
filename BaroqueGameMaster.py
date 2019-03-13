@@ -18,14 +18,10 @@ from os import PathLike
 
 import BC_state_etc as BC
 from winTester import winTester
-# # for demo use
-# MAX_PLY = 5  # moves ahead to consider
-# TIME_LIMIT = 5  # Time limit to calculation in seconds
-# SIDE = 1  # Which side should make the move
 
 
 TIME_PER_MOVE = 0.5 # default time limit is half a second.
-TURN_LIMIT = 20  # Good for testing.
+TURN_LIMIT = 60  # Good for testing.
 #TURN_LIMIT = 100 # Terminates runaway games.
 if len(sys.argv) > 1:
     import importlib    
@@ -188,11 +184,11 @@ def runGame():
     
     
     # print(next_move[1])
-    print('States evaluated: ' + str(player1.states_evaluated))
-    print('Retrieved from hash: ' + str(player1.retrieved))
-    print('times_pruned: ' + str(player1.times_pruned))
-    print('Maximum evaluation value: ' + str(player1.max_eval))
-    print('Minimum evaluation value: ' + str(player1.min_eval))
+    # print('States evaluated: ' + str(player1.states_evaluated))
+    # print('Retrieved from hash: ' + str(player1.retrieved))
+    # print('times_pruned: ' + str(player1.times_pruned))
+    # print('Maximum evaluation value: ' + str(player1.max_eval))
+    # print('Minimum evaluation value: ' + str(player1.min_eval))
 
 
 def timeout(func, args=(), kwargs={}, timeout_duration=1, default=None):

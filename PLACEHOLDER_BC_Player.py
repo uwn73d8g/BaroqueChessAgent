@@ -11,7 +11,6 @@ import BC_state_etc as BC
 import PLACEHOLDER_BC_module_eval as eval
 import zhash as hash
 # from zhash import hash_state
-# hash.init_table()
 TURN = 0
 NUM_ROWS = 8
 NUM_COLS = 8
@@ -36,7 +35,7 @@ def valid_moves(state):
     for i, row in enumerate(board.board):
         for j, tile in enumerate(row):
             # make sure the cell is nonempty and is occupied by a piece owned by whoever's turn current turn
-            if tile != 0 and tile % 2 == board.whose_move and not_frozen(board, (i, j)):
+            if tile != 0 and tile % 2 == board.whose_move and not_frozen(board, i, j):
                 if tile // 2 == 1:
                     # pincer movement
                     moves += pincer_moves(board, i, j)
@@ -160,9 +159,10 @@ def leaper_moves(state, row, col):
     moves = []
     for dir_key in range(8):
         dir = ALL_DIRECTION[dir_key]
-        possible_capture = leaper_capture(state, (row, col), dir)
-        if possible_capture != state:
-            moves.append(leaper_capture(state, (row, col), dir))
+        capture_states=leaper_capture(state, (row, col), dir)
+        for capture in capture_states:
+            if capture != state:
+                moves.append(capture)
     for dir_key in range(8):
         dir = ALL_DIRECTION[dir_key]
         k = 1
@@ -188,28 +188,48 @@ def leaper_capture(state, cur_pos, dir):
     :param dir: direction of the leap
     :return: return a modified state after capture.
     '''
-    hasSpace = cur_pos[0] + 2*dir[0] >= 0 and cur_pos[0] + 2 * \
-        dir[0] < NUM_COLS and cur_pos[1] + 2 * \
-        dir[1] >= 0 and cur_pos[1] + 2 * dir[1] < NUM_ROWS
-    hasEnemy = False
-    hasEmpty = False
-    if hasSpace:
-        possible_enemy_tile = state.board[cur_pos[0]+dir[0]][cur_pos[1]+dir[1]]
-        hasEnemy = possible_enemy_tile != 0 and possible_enemy_tile % 2 != state.whose_move
+    results=[]
+    k=2
+    possible_empty_row=cur_pos[0]+k*dir[0]
+    possible_empty_col=cur_pos[1]+k*dir[1]
+    hasSpace = possible_empty_row >=0 and possible_empty_row< NUM_COLS and possible_empty_col>=0 and possible_empty_col<NUM_ROWS
+    if not hasSpace: return []
+    hasEmpty=state.board[possible_empty_row][possible_empty_col] == 0
+    if not hasEmpty: return []
+    possible_enemy_row=cur_pos[0]+dir[0]
+    possible_enemy_col=cur_pos[1]+dir[1]
+    hasEnemy=state.board[possible_enemy_row][possible_enemy_col] != 0 and state.board[possible_enemy_row][possible_enemy_col] % 2!= state.whose_move
+    if not hasEnemy: return []
 
-        possible_empty_tile = state.board[cur_pos[1] +
-                                          dir[1]*2][cur_pos[1]+dir[1]*2]
-        hasEmpty = possible_empty_tile == 0
+    while hasSpace and hasEmpty:
+        new_state = move_piece(state, cur_pos, (possible_empty_row, possible_empty_col))
+        new_state.board[cur_pos[0] + dir[0]][cur_pos[1] + dir[1]] = 0
+        results.append(new_state)
+        k+=1
+        possible_empty_row = cur_pos[0] + k * dir[0]
+        possible_empty_col = cur_pos[1] + k * dir[1]
+        hasSpace = possible_empty_row >= 0 and possible_empty_row < NUM_COLS and possible_empty_col >= 0 and possible_empty_col < NUM_ROWS
+        if not hasSpace: break
+        hasEmpty = state.board[possible_empty_row][possible_empty_col] == 0
+    # hasSpace = cur_pos[0] + 2*dir[0]>=0 and cur_pos[0] + 2 * dir[0] < NUM_COLS and cur_pos[1] + 2*dir[1]>=0 and cur_pos[1] + 2 * dir[1] < NUM_ROWS
+    # # hasEnemy = False
+    # # hasEmpty = False
+    # if hasSpace:
+    #     possible_enemy_tile = state.board[cur_pos[0]+dir[0]][cur_pos[1]+dir[1]]
+    #     hasEnemy = possible_enemy_tile != 0 and possible_enemy_tile % 2 != state.whose_move
+    #
+    #     possible_empty_tile = state.board[cur_pos[1]+dir[1]*2][cur_pos[1]+dir[1]*2]
+    #     hasEmpty = possible_empty_tile == 0
+    #
+    #     if hasSpace and hasEnemy and hasEmpty:
+    #         new_state=move_piece(state, cur_pos, (cur_pos[0]+dir[0]*2, cur_pos[1]+dir[1]*2))
+    #         new_state.board[cur_pos[0]+dir[0]][cur_pos[1]+dir[1]]=0
+    #         return new_state
 
-        if hasSpace and hasEnemy and hasEmpty:
-            new_state = move_piece(
-                state, cur_pos, (cur_pos[0]+dir[0]*2, cur_pos[1]+dir[1]*2))
-            new_state.board[cur_pos[0]+dir[0]][cur_pos[1]+dir[1]] = 0
-            return new_state
-    return BC.BC_state(state.board, state.whose_move)
-    # if cur_pos[0] + 2*dir[0]>=0 and cur_pos[0] + 2 * dir[0] < NUM_COLS and cur_pos[1] + 2*dir[1]>=0 and cur_pos[1] + 2 * dir[1] < NUM_ROWS:
+    return results
 
-# returns all possible coordinator moves at a given row and col
+
+
 def coordinator_moves(state, row, col):
     '''
 
@@ -248,15 +268,18 @@ def coordinator_capture(state, cur_pos):
     '''
     king_pos = get_king_pos(state, state.whose_move)
     if king_pos:
-        coor1 = state.board[cur_pos[0]][king_pos[1]]
-        coor2 = state.board[king_pos[0]][cur_pos[1]]
+        new_state=BC.BC_state(state.board, state.whose_move)
+        coor1 = new_state.board[cur_pos[0]][king_pos[1]]
+        coor2 = new_state.board[king_pos[0]][cur_pos[1]]
         if coor1 != 0 and coor1 % 2 != state.whose_move:
-            state.board[cur_pos[0]][king_pos[1]] = 0
+            new_state.board[cur_pos[0]][king_pos[1]] = 0
+            return new_state
         if coor2 != 0 and coor2 % 2 != state.whose_move:
-            state.board[king_pos[0]][cur_pos[1]] = 0
+            new_state.board[king_pos[0]][cur_pos[1]] = 0
+            return new_state
     return state
 
-# returns the king's location
+
 def get_king_pos(state, turn):
     '''
 
@@ -305,6 +328,7 @@ def pincer_capture(state, cur_pos):
     :param cur_pos: tuple of the position
     :return: new state of after pincer captures
     '''
+    new_state=BC.BC_state(state.board, state.whose_move)
     new_row = cur_pos[0]
     new_col = cur_pos[1]
 
@@ -318,19 +342,19 @@ def pincer_capture(state, cur_pos):
             0] < NUM_COLS and possible_firendly_pos[1] >= 0 and possible_firendly_pos[1] < NUM_ROWS
         if hasSpace:
 
-            possible_enemy_tile = state.board[possible_enemy_pos[0]
-                                              ][possible_enemy_pos[1]]
-            hasEnemy = possible_enemy_tile != 0 and possible_enemy_tile % 2 != state.whose_move
+            possible_enemy_tile = new_state.board[possible_enemy_pos[0]][possible_enemy_pos[1]]
+            hasEnemy = possible_enemy_tile != 0 and possible_enemy_tile % 2 != new_state.whose_move
 
-            possible_firendly_tile = state.board[possible_firendly_pos[0]
-                                                 ][possible_firendly_pos[1]]
-            hasFirendly = possible_firendly_tile != 0 and possible_firendly_tile % 2 == state.whose_move
+
+            possible_firendly_tile = new_state.board[possible_firendly_pos[0]][possible_firendly_pos[1]]
+            hasFirendly = possible_firendly_tile != 0 and possible_firendly_tile % 2 == new_state.whose_move
 
         # check if there's enemy piece in between pincer and other friendly piece
         if hasEnemy and hasFirendly and hasSpace:
-            state.board[possible_enemy_pos[0]][possible_enemy_pos[1]] = 0
+            # new_state = BC.BC_state(state.board, state.whose_move)
+            new_state.board[possible_enemy_pos[0]][possible_enemy_pos[1]] = 0
 
-    return state
+    return new_state
 
 # returns whether the king will be in check when moves to the given new position
 def king_check(state, new_pos):
@@ -396,42 +420,81 @@ def imitator_moves(state, row, col):
     :return: a list of possible states of board generated by possible imitator moves
     '''
     moves = []
-    imitate_obj, imitate_pos = what_to_imitate(state, row, col)
-    if imitate_obj == 'king':
-        moves.append(move_piece(state, (row, col), imitate_pos))
-    elif imitate_obj == 'freezer':
-        moves += freezer_moves(state, row, col)
-    elif imitate_obj == 'withdrawer':
-        dir_to_imitate = (imitate_pos[0]-row, imitate_pos[1]-col)
-        dir_to_movement = (row-imitate_pos[0], col-imitate_pos[1])
-        k = 1
-        new_row = row + k * dir_to_movement[0]
-        new_col = col + k * dir_to_movement[1]
-        while new_row >= 0 and new_col >= 0 and new_row < NUM_ROWS and new_col < NUM_COLS:
-            if state.board[new_row][new_col] == 0:
-                new_state = move_piece(state, (row, col), (new_row, new_col))
-                possible_capture = withdrawer_capture(
-                    new_state, (row, col), dir_to_movement)
+    # imitate_obj, imitate_pos = what_to_imitate(state, row, col)
+    targets = what_to_imitate(state, row, col)
+    for target in targets:
+        imitate_obj=target[0]
+        imitate_pos=target[1]
+        if imitate_obj == 'king': moves.append(move_piece(state, (row, col), imitate_pos))
+        elif imitate_obj == 'freezer': moves+=freezer_moves(state, row, col)
+        elif imitate_obj == 'withdrawer':
+            dir_to_movement = (row-imitate_pos[0], col-imitate_pos[1])
+            k = 1
+            new_row = row + k * dir_to_movement[0]
+            new_col = col + k * dir_to_movement[1]
+            while new_row >= 0 and new_col >= 0 and new_row < NUM_ROWS and new_col < NUM_COLS:
+                if state.board[new_row][new_col]==0:
+                    new_state=move_piece(state, (row, col), (new_row, new_col))
+                    possible_capture = withdrawer_capture(new_state, (row, col), dir_to_movement)
+                    if possible_capture != new_state:
+                        moves.append(possible_capture)
+                        k += 1
+                        new_row = row + k * dir_to_movement[0]
+                        new_col = col + k * dir_to_movement[1]
+                else: break
+        elif imitate_obj == 'leaper':
+            capture_dir = (imitate_pos[0]-row, imitate_pos[1]-col)
+            possible_captures = leaper_capture(state, (row, col), capture_dir)
+            for possible_capture in possible_captures:
+                if possible_capture != state:
+                    moves.append(possible_capture)
+        elif imitate_obj == 'coordinator':
+            # capture_dir-
+            king_pos=get_king_pos(state, state.whose_move)
+            at_same_line, isRow = is_at_same_line(king_pos, imitate_pos)
+            legal_tiles_pos=[]
+            if at_same_line:
+                if isRow:
+                    for a in range(NUM_ROWS):
+                        legal_tiles_pos.append((a, imitate_pos[1]))
+                else:
+                    for a in range(NUM_ROWS):
+                        legal_tiles_pos.append((imitate_pos[0], a))
+                for dir_key in range(8):
+                    dir = ALL_DIRECTION[dir_key]
+                    k = 1
+                    new_row = row + k * dir[0]
+                    new_col = col + k * dir[1]
+                    while new_row >= 0 and new_col >= 0 and new_row < NUM_ROWS and new_col < NUM_COLS:
+                        if (new_row,new_col) in legal_tiles_pos and state.board[new_row][new_col] == 0:
+                            new_state = move_piece(state, (row, col), (new_row, new_col))
+                            moves.append(coordinator_capture(new_state, (new_row, new_col)))
+                            k += 1
+                            new_row = row + k * dir[0]
+                            new_col = col + k * dir[1]
+                        else:break
+        elif imitate_obj == 'pincer':
+            move_dir=(imitate_pos[0]-row, imitate_pos[1]-col)
+            # imitator can only capture an enemy pincer if it's at imitator's diagonal position
+            if move_dir[0]!=0 and move_dir[1]!=0:
+                new_state=move_piece(state, (row,col), (row+move_dir[0], col))
+                possible_capture=pincer_capture(new_state, (row+move_dir[0], col))
                 if possible_capture != new_state:
                     moves.append(possible_capture)
-                    k += 1
-                    new_row = row + k * dir_to_movement[0]
-                    new_col = col + k * dir_to_movement[1]
-            else:
-                break
-        return moves
-
-    elif imitate_obj == 'leaper':
-        moves += leaper_moves(state, row, col)
-    elif imitate_obj == 'coordinator':
-        moves += coordinator_capture(state, (row, col))
-    elif imitate_obj == 'pincer':
-        moves += pincer_moves(state, row, col)
-    else:
-        return moves
+                new_state = move_piece(state, (row, col), (row, col+move_dir[1]))
+                possible_capture = pincer_capture(new_state, (row, col+move_dir[1]))
+                if possible_capture != new_state:
+                    moves.append(possible_capture)
     return moves
 
-# returns what the imitator will imitate according to the priorities
+
+def is_at_same_line(king_pos, imitate_pos):
+    if king_pos[0] == imitate_pos[0]:
+        return True, True
+    elif king_pos[1] == imitate_pos[1]:
+        return True, False
+    else: return False, None
+
 def what_to_imitate(state, row, col):
     '''
 
@@ -440,33 +503,31 @@ def what_to_imitate(state, row, col):
     :param col:
     :return:
     '''
-    neighbors = eval.get_neighbor(row, col)
+    neighbors = eval.get_neighbor(row,col)
+    list_target=[]
     for neighbor in neighbors:
         tile = state.board[neighbor[0]][neighbor[1]]
         # imitate King is possible
-        if tile // 2 == 6 and tile % 2 != state.whose_move:
-            return 'king', (neighbor[0], neighbor[1])
+        if tile // 2 == 6 and tile % 2 != state.whose_move: list_target.append(('king', neighbor))
+
         # imitate freezer if possible
-        elif tile // 2 == 7 and tile % 2 != state.whose_move:
-            return 'freezer', (neighbor[0], neighbor[1])
+        elif tile // 2 == 7 and tile % 2 != state.whose_move:list_target.append(('freezer', neighbor))
         # imitate withdrawer if possible
-        elif tile // 2 == 5 and tile % 2 != state.whose_move:
-            return 'withdrawer', (neighbor[0], neighbor[1])
+        elif tile // 2 == 5 and tile % 2 != state.whose_move:list_target.append(('withdrawer', neighbor))
+
         # leaper
-        elif tile // 2 == 3 and tile % 2 != state.whose_move:
-            return 'leaper', (neighbor[0], neighbor[1])
+        elif tile // 2 == 3 and tile % 2 != state.whose_move:list_target.append(('leaper', neighbor))
+
         # coordinator
-        elif tile // 2 == 2 and tile % 2 != state.whose_move:
-            return 'coordinator', (neighbor[0], neighbor[1])
+        elif tile // 2 == 2 and tile % 2 != state.whose_move:list_target.append(('coordinator', neighbor))
         # pincer
-        elif tile // 2 == 1 and tile % 2 != state.whose_move:
-            return 'pincer', (neighbor[0], neighbor[1])
-    return 'empty', (0, 0)
+        elif tile // 2 == 1 and tile % 2 != state.whose_move:list_target.append(('pincer', neighbor))
+
+    return list_target
 
 
-# check whether a given cell is frozen or not
-def not_frozen(board, pos):
-    neighbors = eval.get_neighbor(pos[0], pos[1])
+def not_frozen(board, row, col):
+    neighbors = eval.get_neighbor(row, col)
     for neighbor in neighbors:
         piece = board.board[neighbor[0]][neighbor[1]]
         # check whether the piece is a immobilizer or freezer and make sure it's not its turn now
@@ -503,19 +564,19 @@ def alpha_beta_pruning(current_depth, max_ply, current_state, turn, alpha, beta,
             current_depth + 1, max_ply, move, turn, alpha, beta, start_time, time_limit)
         eval_val = staticEval(state)
         move_value = 0
-        hash_value = hash.hash_state(state)
+        # hash_value = hash.hash_state(state)
         # Only add to table when there is new value
-        print("hash value is")
-        print(hash_value)
-        if hash_value in hash.zobTable:
-            move_value = hash.zobTable[hash_value]
-            retrieved += 1
-            print(retrieved)
-        else:
-            move_value = eval_val
-            print(hash_value)
-            hash.zobTable[hash_value] = move_value
-            states_evaluated += 1
+        # print("hash value is")
+        # print(hash_value)
+        # if hash_value in hash.zobTable:
+        #     move_value = hash.zobTable[hash_value]
+        #     retrieved += 1
+        #     print(retrieved)
+        # else:
+        move_value = eval_val
+            # print(hash_value)
+            # hash.zobTable[hash_value] = move_value
+            # states_evaluated += 1
         min_eval = min(min_eval, move_value)
         max_eval = max(move_value, max_eval)
         if turn == 1:
@@ -528,7 +589,7 @@ def alpha_beta_pruning(current_depth, max_ply, current_state, turn, alpha, beta,
                 best_move = state
         if alpha >= beta:
             times_pruned += 1
-            print(times_pruned)
+            # print(times_pruned)
             return best_move
 
     return best_move
@@ -718,39 +779,159 @@ def utterance():
 #     return optimal_state
 
 
-if __name__ == "__main__":
-    # MAX_PLY = 5  # moves ahead to consider
-    # TIME_LIMIT = 5  # Time limit to calculation in seconds
-    # SIDE = 1  # Which side should make the move
+    # Compute the new state for a move.
+    # This is a placeholder that just copies the current state.
+#     newState = BC.BC_state(currentState.board, currentState.whose_move)
+#     # print(newState)
+#     # Fix up whose turn it will be.
+#     # newState.whose_move = currentState.whose_move
+#     # newState.whose_move = 1 - currentState.whose_move
+#     best_state = newState
+#     last_best = None
+#     current_max_ply = 1
+#     while current_max_ply < max_ply:
+#         last_best = best_state
+#         # print(newState.whose_move)
+#         best_state = demo_search(newState, 0, current_max_ply, newState.whose_move, float("-inf"), float("inf"), time_limit)
+#         # print(newState)
+#         current_max_ply += 1
+#         end_time = time.time()
+#         if end_time - start_time > time_limit * 0.90:
+#             best_state = last_best
+#             break 
 
-    # states_evaluated = 0
-    # retrieved_from_hash = 0
-    # times_pruned = 0
-    # min_eval = float("inf")
-    # max_eval = float("-inf")
+#     # move = ((6, 4), (3, 4)) <-- what move looks like
+#     position_A = None
+#     position_B = None
+#     # Checks the board to determing the position of the piece that moved
+#     for i in range(8):
+#         for j in range(8):
+#             if newState.whose_move == 1:
+#                 # Old cell has piece on my side -> New cell is empty, then this is the old position 
+#                 if newState.board[i][j] % 2 == 1 and best_state.board[i][j] == 0:
+#                     position_A = (i, j)
+#                 # Old cell is empty or has opponent's piece -> New cell has piece on my side, then this is the new position
+#                 if newState.board[i][j] % 2 == 0 and best_state.board[i][j] % 2 == 1:
+#                     position_B = (i, j)
+#             else:
+#                 if (newState.board[i][j] % 2 == 0 and newState.board[i][j] != 0) and best_state.board[i][j] == 0:
+#                     position_A = (i, j)
+#                 if (newState.board[i][j] == 0 or newState.board[i][j] % 2 == 1) and (best_state.board[i][j] != 0 and best_state.board[i][j] % 2 == 0):
+#                     position_B = (i, j)
+    
+#     move = (position_A, position_B)
+#     if position_A is None:
+#         move = None
+#     #print('the coordinates: ' + str(move))
 
-    board = BC.parse('''
-c l i - k i l f
-p p p p p p p p
-- - - - - - - -
-- - - - - - - -
-- - - I w - - -
-- - - - - - - -
-P P - P P P P P
-F - L W K I L C       ''')
+#     # Change who's turn
+#     best_state.whose_move = 1 - currentState.whose_move
+#     # print(best_state)
+#     # Make up a new remark
+#     newRemark = "I'll think harder in some future game. Here's my move"
 
-    state = BC.BC_state(board, 1)
+#     end_time = time.time()
+#     print('Calculation took ' + str(end_time - start_time) + ' seconds')
+#     return [move, best_state]
 
-    next_move = demo(state, MAX_PLY, TIME_LIMIT, retrieved_from_hash)
-    if next_move[0] is None:
-        print("CAN'T MOVE!")
-    else:
-        print('Moves from ' +
-              str(next_move[0][0]) + ' to ' + str(next_move[0][1]))
+# def demo_search(current_state, current_depth, max_ply, player, alpha, beta, time_lim):
+#     global start_time, ZOBRIST_HASHING, states_evaluated, times_pruned, min_eval, max_eval, retrieved_from_hash
+#     current_time = time.time()
+#     if current_time - start_time > time_lim * 0.9:
+#         return current_state
+#     # print(current_state)
 
-    print(next_move[1])
-    print('States evaluated: ' + str(states_evaluated))
-    print('Retrieved from hash table: ' + str(retrieved_from_hash))
-    print('Times pruned: ' + str(times_pruned))
-    print('Maximum evaluation value: ' + str(max_eval))
-    print('Minimum evaluation value: ' + str(min_eval))
+#     moves = valid_moves(current_state)
+#     # print(moves)
+#     if not moves or current_depth == max_ply:
+#         return current_state
+
+#     optimal_state = current_state
+#     # For each valid move, find the best move in the next ply
+#     for move in moves:
+#         # print(move)
+#         state = demo_search(move, current_depth + 1, max_ply, 1 - player, alpha, beta, time_lim)
+#         move_value = 0
+#         # hash_value = hash.hash_state(state)
+#         # # Check if state has been hashed already.  Add to the hash table if not with its corresponding static evaluation value.
+#         # if ZOBRIST_HASHING and hash_value in hash.table:
+#         #     move_value = hash.table[hash_value]
+#         #     retrieved_from_hash += 1
+#         # else:
+#         # move_value = eval.static_eval(state)
+#         # move_value=random.randint(-100, 100)
+#         # time.sleep(0.1)
+#         move_value=eval.static_eval(state)
+
+#         # print(move_value)
+#         #     hash.table[hash_value] = move_value
+#         #     states_evaluated += 1
+#         if move_value < min_eval:
+#             min_eval = move_value
+#         if move_value > max_eval:
+#             max_eval = move_value
+#         if player == 1:
+#             if move_value > alpha:
+#                 alpha = move_value
+#                 if current_depth == 0:
+#                     optimal_state = move
+#                 else:
+#                     optimal_state = state
+#         else:
+#             if move_value < beta:
+#                 beta = move_value
+#                 if current_depth == 0:
+#                     optimal_state = move
+#                 else:
+#                     optimal_state = state
+        
+#         if alpha >= beta:
+#             times_pruned += 1
+#             return optimal_state
+
+#     # states_evaluated = 0
+#     # retrieved_from_hash = 0
+#     # times_pruned = 0
+#     # min_eval = float("inf")
+#     # max_eval = float("-inf")
+
+# if __name__ == "__main__":
+#     MAX_PLY = 5 # How many moves ahead to consider
+#     ZOBRIST_HASHING = True # Use zobrist hashing if true
+#     TIME_LIMIT = 6000 # Time limit to calculation in seconds
+#     SIDE = 1 # Which side should make the move
+
+#     states_evaluated = 0
+#     retrieved_from_hash = 0
+#     times_pruned = 0
+#     min_eval = float("inf")
+#     max_eval = float("-inf")
+
+#     # Edit the board to see the best next move!
+#     board = BC.parse('''
+# c l i - k i l f
+# p p p - p p p p
+# - - - - - - - -
+# - - - - - - - -
+# - - - - I - - -
+# - - - f - - - -
+# - - - - - - - -
+# - - - - - K - -       ''')
+#     # print(board)
+#     # state = BC.BC_state()
+
+#     state = BC.BC_state(board, 1)
+
+#     next_move = demo(state, MAX_PLY, TIME_LIMIT, retrieved_from_hash)
+#     if next_move[0] is None:
+#         print("CAN'T MOVE!")
+#     else:
+#         print('Moves from ' +
+#               str(next_move[0][0]) + ' to ' + str(next_move[0][1]))
+
+#     print(next_move[1])
+#     print('States evaluated: ' + str(states_evaluated))
+#     print('Retrieved from hash table: ' + str(retrieved_from_hash))
+#     print('Times pruned: ' + str(times_pruned))
+#     print('Maximum evaluation value: ' + str(max_eval))
+#     print('Minimum evaluation value: ' + str(min_eval))

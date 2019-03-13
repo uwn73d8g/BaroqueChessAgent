@@ -97,10 +97,10 @@ def static_eval(state):
 
                 # pincer next move capture
                 if tile % 2 == 1:
-                    pining_count = find_pin(state, i, j)
+                    # pining_count = find_pin(state, i, j)
                     if isWhite: white+=1
                     else: black+=1
-
+    # time.sleep(0.1)
     return white - black
 
 def find_pin(state, i, j):

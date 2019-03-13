@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="cfe1761e-452e-46bc-8100-789fdb5256f3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/PLACEHOLDER_BC_Player.py" beforeDir="false" afterPath="$PROJECT_DIR$/PLACEHOLDER_BC_Player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PLACEHOLDER_BC_module_eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/PLACEHOLDER_BC_module_eval.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -26,8 +27,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/PLACEHOLDER_BC_Player.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="236">
-                  <caret line="645" selection-start-line="645" selection-end-line="645" />
+                <state relative-caret-position="161">
+                  <caret line="458" column="14" selection-start-line="458" selection-start-column="4" selection-end-line="458" selection-end-column="14" />
                   <folding>
                     <element signature="e#94#119#0" expanded="true" />
                   </folding>
@@ -36,10 +37,19 @@
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
+            <entry file="file:///Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/codecs.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="378">
+                  <caret line="311" selection-start-line="311" selection-end-line="311" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/PLACEHOLDER_BC_module_eval.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-6">
-                  <caret line="72" column="23" selection-start-line="72" selection-start-column="23" selection-end-line="72" selection-end-column="23" />
+                <state relative-caret-position="-63">
+                  <caret line="103" selection-start-line="103" selection-end-line="103" />
                 </state>
               </provider>
             </entry>
@@ -47,8 +57,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/BC_state_etc.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-10">
-                  <caret line="84" column="19" lean-forward="true" selection-start-line="84" selection-start-column="19" selection-end-line="84" selection-end-column="19" />
+                <state relative-caret-position="285">
+                  <caret line="120" selection-start-line="120" selection-end-line="120" />
                 </state>
               </provider>
             </entry>
@@ -60,8 +70,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/BC_state_etc.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="228">
-                  <caret line="91" column="12" selection-start-line="91" selection-start-column="12" selection-end-line="91" selection-end-column="12" />
+                <state relative-caret-position="185">
+                  <caret line="85" selection-start-line="85" selection-end-line="92" selection-end-column="15" />
                 </state>
               </provider>
             </entry>
@@ -87,6 +97,11 @@
       <find>static_eval</find>
       <find>get_neigh</find>
       <find>print(</find>
+      <find>print</find>
+      <find>slee</find>
+      <find>leaper</find>
+      <find>coordinator</find>
+      <find>not_frozen</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -102,7 +117,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
+  <component name="ProjectFrameBounds" fullScreen="true">
     <option name="y" value="23" />
     <option name="width" value="1680" />
     <option name="height" value="949" />
@@ -183,15 +198,16 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
+    <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14888488" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.43061224" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.3857143" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.43061224" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3857143" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -214,26 +230,19 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/PLACEHOLDER_BC_Player.py</url>
-          <line>669</line>
-          <option name="timeStamp" value="34" />
+          <line>44</line>
+          <option name="timeStamp" value="57" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/PLACEHOLDER_BC_Player.py</url>
-          <line>645</line>
-          <option name="timeStamp" value="42" />
+          <line>408</line>
+          <option name="timeStamp" value="70" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/PLACEHOLDER_BC_module_zhash.py" />
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/codecs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="309" selection-start-line="309" selection-end-line="309" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/PlayerSkeletonB.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -244,24 +253,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/BC_state_etc.py">
+    <entry file="file://$PROJECT_DIR$/PLACEHOLDER_BC_module_eval.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-10">
-          <caret line="84" column="19" lean-forward="true" selection-start-line="84" selection-start-column="19" selection-end-line="84" selection-end-column="19" />
+        <state relative-caret-position="-63">
+          <caret line="103" selection-start-line="103" selection-end-line="103" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PLACEHOLDER_BC_module_eval.py">
+    <entry file="file://$PROJECT_DIR$/BC_state_etc.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-6">
-          <caret line="72" column="23" selection-start-line="72" selection-start-column="23" selection-end-line="72" selection-end-column="23" />
+        <state relative-caret-position="285">
+          <caret line="120" selection-start-line="120" selection-end-line="120" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/codecs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="311" selection-start-line="311" selection-end-line="311" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PLACEHOLDER_BC_Player.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="236">
-          <caret line="645" selection-start-line="645" selection-end-line="645" />
+        <state relative-caret-position="161">
+          <caret line="458" column="14" selection-start-line="458" selection-start-column="4" selection-end-line="458" selection-end-column="14" />
           <folding>
             <element signature="e#94#119#0" expanded="true" />
           </folding>
